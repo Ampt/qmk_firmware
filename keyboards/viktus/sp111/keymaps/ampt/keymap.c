@@ -67,6 +67,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______,      _______, _______, _______, _______, _______,          _______, _______, _______, _______, _______,                            _______, _______, _______),
 };
 
+// Caps Lock LED doubles as a layer indicator: on whenever a non-base layer is active.
+static void update_indicators(led_t led_state, layer_state_t layers) {
+    led_state.caps_lock |= get_highest_layer(layers) != _BASE;
+    led_update_ports(led_state);
+}
+
+bool led_update_user(led_t led_state) {
+    update_indicators(led_state, layer_state);
+    return false;
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+    update_indicators(host_keyboard_led_state(), state);
+    return state;
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         switch (keycode) {
