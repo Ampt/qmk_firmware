@@ -35,8 +35,8 @@ enum layer_names {
 #define MV_RT LCTL(LALT(KC_1))
 #define SH_MC LCTL(LALT(KC_3))
 #define RS_ESC LT(_RST, KC_ESC)
-// Superwhisper's Toggle Recording shortcut
-#define SW_TOG KC_F12
+// Superwhisper Toggle Recording; Hyper+F19 so no other app claims it
+#define SW_TOG HYPR(KC_F19)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT_all(
