@@ -37,6 +37,10 @@ enum layer_names {
 #define RS_ESC LT(_RST, KC_ESC)
 // Superwhisper Toggle Recording; Hyper+F19 so no other app claims it
 #define SW_TOG HYPR(KC_F19)
+// Superwhisper Push to Talk
+#define SW_PTT KC_RALT
+// Tap toggles recording, hold is push-to-talk; LT(0, ...) only supplies tap-hold detection
+#define SW_KEY LT(0, KC_F19)
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_BASE] = LAYOUT_all(
@@ -45,7 +49,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_P7,   KC_P8,   KC_P9,   KC_NO,        KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,          KC_PGDN, KC_END,
     KC_P4,   KC_P5,   KC_P6,   KC_PPLS,      MO(_FN), KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_NO,   KC_ENT,           MO(_FN), KC_DEL,
     KC_P1,   KC_P2,   KC_P3,   KC_PENT,      KC_LSFT, KC_NO,   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_RSFT, MO(_FN),          KC_UP,
-    SW_TOG,  KC_P0,   KC_PDOT, KC_NO,        KC_LCTL, KC_LGUI, KC_LALT, KC_NO,   KC_SPC,           KC_SPC,  MO(_RST), KC_RALT, KC_RGUI, KC_RCTL,                           KC_LEFT, KC_DOWN, KC_RIGHT),
+    SW_KEY,  KC_P0,   KC_PDOT, KC_NO,        KC_LCTL, KC_LGUI, KC_LALT, KC_NO,   KC_SPC,           KC_SPC,  MO(_RST), KC_RALT, KC_RGUI, KC_RCTL,                           KC_LEFT, KC_DOWN, KC_RIGHT),
 
     [_FN] = LAYOUT_all(
     _______, _______, _______, _______,      _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______,
@@ -78,4 +82,21 @@ bool led_update_user(led_t led_state) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     update_indicators(host_keyboard_led_state(), state);
     return state;
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case SW_KEY:
+            if (record->tap.count) {
+                if (record->event.pressed) {
+                    tap_code16(SW_TOG);
+                }
+            } else if (record->event.pressed) {
+                register_code(SW_PTT);
+            } else {
+                unregister_code(SW_PTT);
+            }
+            return false;
+    }
+    return true;
 }
