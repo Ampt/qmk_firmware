@@ -37,8 +37,8 @@ enum layer_names {
 #define RS_ESC LT(_RST, KC_ESC)
 // Superwhisper Toggle Recording; Hyper+F19 so no other app claims it
 #define SW_TOG HYPR(KC_F19)
-// Superwhisper Push to Talk
-#define SW_PTT KC_RALT
+// Superwhisper Push to Talk; Hyper+F18 for the same reason
+#define SW_PTT HYPR(KC_F18)
 // Tap toggles recording, hold is push-to-talk; LT(0, ...) only supplies tap-hold detection
 #define SW_KEY LT(0, KC_F19)
 
@@ -92,9 +92,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     tap_code16(SW_TOG);
                 }
             } else if (record->event.pressed) {
-                register_code(SW_PTT);
+                register_code16(SW_PTT);
             } else {
-                unregister_code(SW_PTT);
+                unregister_code16(SW_PTT);
             }
             return false;
     }
